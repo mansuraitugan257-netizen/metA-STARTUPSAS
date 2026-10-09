@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="AI Сұхбат Симуляторы — жасанды интеллект негізіндегі стартап">
+<meta name="theme-color" content="#0a0e27">
+<title>AI Сұхбат Симуляторы — Стартап тұсаукесері</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0e27;
+    --bg2: #111633;
+    --card: #161b3d;
+    --accent: #6c5ce7;
+    --accent2: #00d2ff;
+    --accent3: #ff6b9d;
+    --text: #e8ecff;
+    --muted: #8b93b8;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  .bg-glow {
+    position: fixed;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    filter: blur(150px);
+    opacity: 0.4;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .glow1 { background: var(--accent); top: -200px; left: -200px; animation: float1 12s infinite; }
+  .glow2 { background: var(--accent2); bottom: -200px; right: -200px; animation: float2 15s infinite; }
+
+  @keyframes float1 {
+    0%,100% { transform: translate(0,0); }
+    50% { transform: translate(100px, 80px); }
+  }
+  @keyframes float2 {
+    0%,100% { transform: translate(0,0); }
+    50% { transform: translate(-100px, -60px); }
+  }
+
+  .container { max-width: 1150px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 60px 0;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 8px 20px;
+    background: rgba(108, 92, 231, 0.15);
+    border: 1px solid rgba(108, 92, 231, 0.5);
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent2);
+    margin-bottom: 30px;
+    letter-spacing: 0.5px;
+    animation: fadeInDown 0.8s ease;
+  }
+
+  h1 {
+    font-size: clamp(38px, 6vw, 76px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, #fff 0%, #a5b4ff 50%, var(--accent2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeInUp 0.8s ease 0.1s both;
+  }
+
+  .hero p {
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--muted);
+    max-width: 650px;
+    margin-bottom: 40px;
+    animation: fadeInUp 0.8s ease 0.2s both;
+  }
+
+  .btns { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; animation: fadeInUp 0.8s ease 0.3s both; }
+
+  .btn {
+    padding: 16px 36px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-block;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+    color: #fff;
+    box-shadow: 0 10px 40px rgba(108, 92, 231, 0.5);
+  }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 50px rgba(108, 92, 231, 0.7); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 2px solid rgba(255,255,255,0.2);
+  }
+  .btn-outline:hover { border-color: var(--accent2); color: var(--accent2); transform: translateY(-3px); }
+
+  section { padding: 100px 0; position: relative; z-index: 1; }
+
+  .section-title {
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .section-sub {
+    text-align: center;
+    color: var(--muted);
+    font-size: 18px;
+    margin-bottom: 60px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+
+  .card {
+    background: linear-gradient(145deg, var(--card) 0%, var(--bg2) 100%);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 24px;
+    padding: 40px;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+
+  .card:hover::before { transform: scaleX(1); }
+  .card:hover { transform: translateY(-8px); border-color: rgba(108, 92, 231, 0.4); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+
+  .card-icon {
+    width: 60px; height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 24px;
+  }
+
+  .icon-red { background: rgba(255, 107, 157, 0.15); }
+  .icon-green { background: rgba(0, 210, 255, 0.15); }
+
+  .card h3 { font-size: 24px; margin-bottom: 14px; font-weight: 700; }
+  .card p { color: var(--muted); font-size: 16px; }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+  }
+
+  .feature {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    padding: 32px;
+    transition: all 0.3s ease;
+  }
+
+  .feature:hover {
+    transform: translateY(-6px);
+    border-color: rgba(0, 210, 255, 0.4);
+    box-shadow: 0 15px 40px rgba(0, 210, 255, 0.1);
+  }
+
+  .feature-num {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--accent2);
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+
+  .feature h4 { font-size: 20px; margin-bottom: 10px; font-weight: 700; }
+  .feature p { color: var(--muted); font-size: 15px; }
+
+  .audience-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+
+  .audience-card {
+    background: linear-gradient(160deg, var(--card), var(--bg2));
+    border-radius: 20px;
+    padding: 32px 24px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.3s ease;
+  }
+
+  .audience-card:hover { transform: scale(1.04); border-color: var(--accent); }
+
+  .audience-emoji { font-size: 44px; margin-bottom: 16px; display: block; }
+  .audience-card h4 { font-size: 18px; margin-bottom: 8px; }
+  .audience-card p { font-size: 14px; color: var(--muted); }
+
+  .price-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    max-width: 950px;
+    margin: 0 auto;
+  }
+
+  .price-card {
+    background: linear-gradient(160deg, var(--card), var(--bg2));
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 24px;
+    padding: 40px 32px;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .price-card.popular {
+    border-color: var(--accent);
+    box-shadow: 0 0 60px rgba(108, 92, 231, 0.3);
+    transform: scale(1.05);
+  }
+
+  .price-tag {
+    position: absolute;
+    top: -14px; left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    padding: 6px 20px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .price-card h4 { font-size: 20px; margin-bottom: 16px; color: var(--muted); font-weight: 600; }
+
+  .price {
+    font-size: 48px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #fff, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .price-desc { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+
+  .price-features { list-style: none; text-align: left; }
+  .price-features li {
+    padding: 10px 0;
+    color: var(--muted);
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .price-features li::before {
+    content: '✓';
+    color: var(--accent2);
+    font-weight: 800;
+  }
+
+  .roadmap {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .roadmap::before {
+    content: '';
+    position: absolute;
+    left: 30px; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--accent), var(--accent2), transparent);
+    border-radius: 3px;
+  }
+
+  .step {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 40px;
+    position: relative;
+  }
+
+  .step-dot {
+    flex-shrink: 0;
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 3px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--accent2);
+    z-index: 2;
+    box-shadow: 0 0 30px rgba(108, 92, 231, 0.4);
+  }
+
+  .step-content {
+    background: var(--card);
+    border-radius: 20px;
+    padding: 28px;
+    flex: 1;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .step-content h4 { font-size: 20px; margin-bottom: 8px; }
+  .step-content p { color: var(--muted); font-size: 15px; }
+
+  .cta {
+    text-align: center;
+    padding: 80px 40px;
+    background: linear-gradient(135deg, rgba(108, 92, 231, 0.15), rgba(0, 210, 255, 0.1));
+    border-radius: 32px;
+    border: 1px solid rgba(108, 92, 231, 0.3);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta h2 { font-size: clamp(26px, 4vw, 42px); margin-bottom: 16px; font-weight: 800; }
+  .cta p { color: var(--muted); font-size: 18px; margin-bottom: 32px; }
+
+  footer {
+    text-align: center;
+    padding: 40px 0;
+    color: var(--muted);
+    font-size: 14px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin-top: 60px;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s ease;
+  }
+  .reveal.active { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 768px) {
+    .two-col { grid-template-columns: 1fr; }
+    section { padding: 70px 0; }
+    .step { gap: 20px; }
+    .step-dot { width: 50px; height: 50px; font-size: 16px; }
+    .price-card.popular { transform: scale(1); }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow glow1"></div>
+<div class="bg-glow glow2"></div>
+
+<div class="container">
+  <div class="hero">
+    <span class="badge">🚀 Жасанды интеллект негізіндегі стартап</span>
+    <h1>AI Сұхбат<br>Симуляторы</h1>
+    <p>Жасанды интеллект сұхбатқа дайындалуға көмектеседі: нақты вакансия бойынша жаттығу, жауаптарды талдау және жеке есеп алу.</p>
+    <div class="btns">
+      <a href="#problem" class="btn btn-primary">Толығырақ</a>
+      <a href="#pricing" class="btn btn-outline">Бағалар</a>
+    </div>
+  </div>
+</div>
+
+<section id="problem">
+  <div class="container">
+    <h2 class="section-title reveal">Мәселе және Шешім</h2>
+    <p class="section-sub reveal">Біз нарықтағы нақты ауыртпалықты шешеміз</p>
+
+    <div class="two-col">
+      <div class="card reveal">
+        <div class="card-icon icon-red">⚠️</div>
+        <h3>Мәселе</h3>
+        <p>Адамдар сұхбаттан қорқады, «Өзіңіз туралы айтып беріңіз» деген сұраққа қалай жауап беруді білмейді және ұсыныстарды жоғалтады. Нақты жаттығу жасайтын орта жоқ.</p>
+      </div>
+
+      <div class="card reveal">
+        <div class="card-icon icon-green">💡</div>
+        <h3>Шешім</h3>
+        <p>Бот нақты вакансия бойынша mock-interview өткізеді, жауаптарды жазып алады, сөйлеу мәнерін, үзілістерді, құрылымды талдайды және толық есеп береді.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2 class="section-title reveal">Негізгі мүмкіндіктер</h2>
+    <p class="section-sub reveal">Платформа не істей алады</p>
+
+    <div class="features-grid">
+      <div class="feature reveal">
+        <div class="feature-num">01</div>
+        <h4>Вакансияға бейімделу</h4>
+        <p>IT, маркетинг, қаржы — кез келген сала бойынша сұрақтар базасы.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-num">02</div>
+        <h4>Дауыс талдауы</h4>
+        <p>Сөйлеу жылдамдығы, үзілістер, сенімділік деңгейі бағаланады.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-num">03</div>
+        <h4>Құрылымды бағалау</h4>
+        <p>STAR әдісі бойынша жауаптың қисыны тексеріледі.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-num">04</div>
+        <h4>Жеке есеп</h4>
+        <p>Күшті және әлсіз тұстар, нақты ұсыныстар, даму жоспары.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-num">05</div>
+        <h4>Кері байланыс</h4>
+        <p>Әр жауаптан кейін лездік талдау және үлгі жауаптар.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-num">06</div>
+        <h4>Прогресс бақылау</h4>
+        <p>Уақыт бойынша өсу динамикасын көру мүмкіндігі.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2 class="section-title reveal">Мақсатты аудитория</h2>
+    <p class="section-sub reveal">Кімге бұл өнім керек</p>
+
+    <div class="audience-grid">
+      <div class="audience-card reveal">
+        <span class="audience-emoji">🎓</span>
+        <h4>Студенттер</h4>
+        <p>Алғашқы жұмысқа орналасуға дайындалатындар</p>
+      </div>
+      <div class="audience-card reveal">
+        <span class="audience-emoji">💼</span>
+        <h4>Кәсіпқойлар</h4>
+        <p>Жаңа лауазымға өтуді жоспарлағандар</p>
+      </div>
+      <div class="audience-card reveal">
+        <span class="audience-emoji">🌍</span>
+        <h4>IT мамандары</h4>
+        <p>Халықаралық компанияларға сұхбаттасатындар</p>
+      </div>
+      <div class="audience-card reveal">
+        <span class="audience-emoji">🏢</span>
+        <h4>Компаниялар</h4>
+        <p>Қызметкерлерді даярлау үшін (B2B)</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="container">
+    <h2 class="section-title reveal">Монетизация</h2>
+    <p class="section-sub reveal">Икемді баға жүйесі</p>
+
+    <div class="price-grid">
+      <div class="price-card reveal">
+        <h4>Бір реттік сессия</h4>
+        <div class="price">$5</div>
+        <div class="price-desc">Бір сұхбатты толық талдау</div>
+        <ul class="price-features">
+          <li>1 mock-interview</li>
+          <li>Толық есеп</li>
+          <li>Ұсыныстар тізімі</li>
+        </ul>
+      </div>
+
+      <div class="price-card popular reveal">
+        <span class="price-tag">Танымал</span>
+        <h4>Айлық жазылым</h4>
+        <div class="price">$12</div>
+        <div class="price-desc">Айына шексіз жаттығу</div>
+        <ul class="price-features">
+          <li>Шексіз mock-interview</li>
+          <li>Барлық салалар</li>
+          <li>Прогресс бақылау</li>
+          <li>Жеке ұсыныстар</li>
+        </ul>
+      </div>
+
+      <div class="price-card reveal">
+        <h4>B2B лицензия</h4>
+        <div class="price">$500</div>
+        <div class="price-desc">Компаниялар үшін (50 қызметкер)</div>
+        <ul class="price-features">
+          <li>HR-панель</li>
+          <li>Корпоративтік база</li>
+          <li>Аналитика</li>
+          <li>Техникалық қолдау</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <h2 class="section-title reveal">Даму жоспары</h2>
+    <p class="section-sub reveal">MVP-ден нарыққа дейін</p>
+
+    <div class="roadmap">
+      <div class="step reveal">
+        <div class="step-dot">1</div>
+        <div class="step-content">
+          <h4>MVP жасау</h4>
+          <p>Telegram-бот + AI интеграциясы. Алғашқы 100 тестілеуші.</p>
+        </div>
+      </div>
+
+      <div class="step reveal">
+        <div class="step-dot">2</div>
+        <div class="step-content">
+          <h4>Алғашқы клиенттер</h4>
+          <p>Университеттермен серіктестік. 1000 белсенді пайдаланушы.</p>
+        </div>
+      </div>
+
+      <div class="step reveal">
+        <div class="step-dot">3</div>
+        <div class="step-content">
+          <h4>Масштабтау</h4>
+          <p>Мобильді қосымша, B2B сегментке шығу.</p>
+        </div>
+      </div>
+
+      <div class="step reveal">
+        <div class="step-dot">4</div>
+        <div class="step-content">
+          <h4>Нарыққа шығу</h4>
+          <p>Қазақстан, ТМД және халықаралық нарық.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="cta reveal">
+      <h2>Сұхбаттан қорықпаңыз</h2>
+      <p>AI-мен бірге дайындалыңыз және армандаған жұмысқа ие болыңыз</p>
+      <a href="#" class="btn btn-primary">Тегін байқап көру</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>© 2025 AI Сұхбат Симуляторы · Стартап тұсаукесері</p>
+  </div>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
